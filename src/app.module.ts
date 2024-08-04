@@ -5,11 +5,12 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(
-    {
-      envFilePath: (process.env.NODE_ENV === 'development') ? '.dev.env' : '.env'
-    }
-  ), UsersModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'development' ? '.dev.env' : '.env',
+    }),
+    UsersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
