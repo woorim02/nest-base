@@ -1,7 +1,9 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 
-dotenv.config({ path: process.env.NODE_ENV === 'development' ? '.dev.env' : '.env' });
+dotenv.config({
+  path: process.env.NODE_ENV === 'development' ? '.dev.env' : '.env',
+});
 
 export default new DataSource({
   type: 'mariadb',
@@ -13,5 +15,5 @@ export default new DataSource({
   synchronize: false,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: ['src/migrations/**/*.ts'],
-  migrationsTableName: 'migrations'
+  migrationsTableName: 'migrations',
 });
