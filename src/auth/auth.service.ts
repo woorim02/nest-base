@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenData } from './tokendata';
 
 import * as bcrypt from 'bcrypt';
+import { AccessTokenPayload } from './access-token-payload';
 
 @Injectable()
 export class AuthService {
@@ -61,10 +62,14 @@ export class AuthService {
 
     const user = await this.userService.findOneAsync(userName);
 
+    if (user === null){
+      throw new UnauthorizedException('아이디 또는 비밀번호가 잘못되었습니다.')
+    }
+
     // 비밀번호 비교
     const comparePassword = await bcrypt.compare(password, user.encPassword);
     if (!comparePassword) {
-      throw new UnauthorizedException('password is wrong');
+      throw new UnauthorizedException('아이디 또는 비밀번호가 잘못되었습니다.');
     }
 
     return user;
@@ -72,8 +77,8 @@ export class AuthService {
 
   // access_token 발급
   async createAccessToken(user: User): Promise<string> {
-    const payload = {
-      id: user.id,
+    const payload: AccessTokenPayload = {
+      userId: user.id,
       userName: user.userName,
       email: user.email,
       roles: user.roles,

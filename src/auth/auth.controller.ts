@@ -1,19 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { JwtAccessTokenGuard } from './guard/jwt-access-token.guard';
 import { JwtRefreshTokenGuard } from './guard/jwt-refresh-token.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutDto } from './dto/logout.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,7 +36,7 @@ export class AuthController {
   @UseGuards(JwtRefreshTokenGuard)
   @Post('refresh')
   async refresh(
-    @Req() req: RefreshTokenDto,
+    @Body() req: RefreshTokenDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const userId: number = req.userId;
@@ -64,8 +55,8 @@ export class AuthController {
   @UseGuards(JwtAccessTokenGuard)
   @UseGuards(JwtRefreshTokenGuard)
   @Post('logout')
-  async logout(@Req() req: LogoutDto, @Res() res: Response) {
-    await this.authService.logout(req.userId);
+  async logout(@Req() req: any, @Res() res: Response) {
+    await this.authService.logout(req.user.id);
 
     // 쿠키 토큰 삭제
     res.clearCookie('access_token');

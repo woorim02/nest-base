@@ -1,6 +1,4 @@
-export interface AccessTokenPayload {
+export interface RefreshTokenPayload {
   userId: number;
-  username: string;
-  email: string;
-  roles: string[];
+  userName: string;
 }
