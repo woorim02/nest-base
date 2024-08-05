@@ -62,8 +62,8 @@ export class AuthService {
 
     const user = await this.userService.findOneAsync(userName);
 
-    if (user === null){
-      throw new UnauthorizedException('아이디 또는 비밀번호가 잘못되었습니다.')
+    if (user === null) {
+      throw new UnauthorizedException('아이디 또는 비밀번호가 잘못되었습니다.');
     }
 
     // 비밀번호 비교

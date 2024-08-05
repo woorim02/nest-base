@@ -14,10 +14,10 @@ export class UsersService {
   ) {}
 
   async createAsync(createUserDto: CreateUserDto): Promise<User> {
-    let user = {
+    const user = {
       ...createUserDto,
-      encPassword: await bcrypt.hash(createUserDto.password, 10)
-    }
+      encPassword: await bcrypt.hash(createUserDto.password, 10),
+    };
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
   }

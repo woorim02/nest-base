@@ -15,7 +15,6 @@ export class AccessTokenStrategy extends PassportStrategy(
       // request의 쿠키에서 refresh token을 가져옴
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request) => {
-          console.log(request.cookies);
           return request?.cookies?.access_token;
         },
       ]),
