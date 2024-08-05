@@ -1,4 +1,4 @@
 export interface RefreshTokenPayload {
-  userId: number;
+  id: number;
   userName: string;
 }

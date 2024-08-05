@@ -78,7 +78,7 @@ export class AuthService {
   // access_token 발급
   async createAccessToken(user: User): Promise<string> {
     const payload: AccessTokenPayload = {
-      userId: user.id,
+      id: user.id,
       userName: user.userName,
       email: user.email,
       roles: user.roles,

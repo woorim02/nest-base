@@ -17,13 +17,23 @@ async function bootstrap() {
     }),
   );
 
+  // swagger
   const config = new DocumentBuilder()
     .setTitle('nest-base')
     .setDescription('nest Boilerplate')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger/index.html', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   // start program
   const configService = app.get(ConfigService);

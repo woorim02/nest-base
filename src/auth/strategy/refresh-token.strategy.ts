@@ -5,7 +5,6 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from '../auth.service';
 import { RefreshTokenPayload } from '../refresh-token-payload';
-
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -16,12 +15,8 @@ export class RefreshTokenStrategy extends PassportStrategy(
     private readonly authService: AuthService,
   ) {
     super({
-      // access token strategy와 동일
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request) => {
-          return request?.cookies?.refresh_token;
-        },
-      ]),
+      // body에서 refreshToken 가져옴
+      jwtFromRequest: ExtractJwt.fromHeader('x-refresh-token'),
       secretOrKey: configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       ignoreExpiration: false,
       passReqToCallback: true,
@@ -29,16 +24,15 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: RefreshTokenPayload) {
-    const refreshToken = req?.cookies?.refresh_token;
+    const refreshToken = req.headers['x-refresh-token'];
 
-    // refresh token이 없을 경우 예외 발생
-    if (!refreshToken) {
-      throw new UnauthorizedException('refresh token is undefined');
+    if (!refreshToken || typeof refreshToken !== 'string') {
+      throw new UnauthorizedException('Invalid or missing refresh token');
     }
 
     // 저장된 refresh token과 비교
     const result = await this.authService.compareUserRefreshToken(
-      payload.userId,
+      payload.id,
       refreshToken,
     );
     // 결과가 틀렸다면 예외 발생

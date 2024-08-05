@@ -12,17 +12,19 @@ import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { JwtAccessTokenGuard } from './guard/jwt-access-token.guard';
 import { JwtRefreshTokenGuard } from './guard/jwt-refresh-token.guard';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   // access token 검증 메서드
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAccessTokenGuard)
   @Get('test')
-  test() {
-    return 'success';
+  test(@Req() req: any) {
+    return req.user;
   }
 
   @Post('login')
@@ -41,17 +43,18 @@ export class AuthController {
     return tokenData;
   }
 
+  @ApiHeader({
+    name: 'x-refresh-token',
+    description: 'Refresh token',
+    required: true,
+  })
   @UseGuards(JwtRefreshTokenGuard)
   @Post('refresh')
-  async refresh(
-    @Body() req: RefreshTokenDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const userId: number = req.userId;
-    const refreshToken = req.refreshToken;
+  async refresh(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.headers['x-refresh-token'].replace('Bearer ', '');
 
     // 새로운 access token 발급
-    const tokenData = await this.authService.refresh(userId, refreshToken);
+    const tokenData = await this.authService.refresh(req.user.id, refreshToken);
 
     // 쿠키의 access token 교체
     res.setHeader('Authorization', 'Bearer ' + tokenData.accessToken);
@@ -60,15 +63,15 @@ export class AuthController {
     return tokenData;
   }
 
-  @UseGuards(JwtAccessTokenGuard)
+  @ApiHeader({
+    name: 'x-refresh-token',
+    description: 'Refresh token',
+    required: true,
+  })
   @UseGuards(JwtRefreshTokenGuard)
   @Post('logout')
   async logout(@Req() req: any, @Res() res: Response) {
     await this.authService.logout(req.user.id);
-
-    // 쿠키 토큰 삭제
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
     return res.send('success');
   }
 }
