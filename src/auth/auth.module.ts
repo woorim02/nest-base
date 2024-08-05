@@ -11,7 +11,7 @@ import { RefreshTokenStrategy } from './strategy/refresh-token.strategy';
   imports: [
     JwtModule.register({ global: true }),
     ConfigModule,
-    UsersModule,  // UsersModule을 임포트하여 UsersService를 사용 가능하도록 함
+    UsersModule, // UsersModule을 임포트하여 UsersService를 사용 가능하도록 함
   ],
   controllers: [AuthController],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
