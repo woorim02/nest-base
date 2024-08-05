@@ -7,12 +7,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //set pipes
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   // start program
   const configService = app.get(ConfigService);
