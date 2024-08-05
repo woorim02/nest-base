@@ -34,7 +34,7 @@ export class AuthService {
 
   async logout(userId: number): Promise<void> {
     // DB의 currentRefreshToken 을 null로 교체
-    await this.userService.updateAsync(userId, {
+    await this.userService.updateTokenAsync(userId, {
       refreshToken: null,
     });
   }
@@ -144,7 +144,7 @@ export class AuthService {
     const refreshTokenExp = new Date(now.getTime() + exp);
 
     // DB 업데이트
-    await this.userService.updateAsync(userId, {
+    await this.userService.updateTokenAsync(userId, {
       refreshToken: hashedRefreshToken,
       refreshTokenExp: refreshTokenExp,
     });
