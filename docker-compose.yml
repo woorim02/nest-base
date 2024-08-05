@@ -1,0 +1,9 @@
+services:
+  nest-app:
+    image: nest-base
+    restart: always
+    container_name: nest-app
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
